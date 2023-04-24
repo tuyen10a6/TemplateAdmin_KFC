@@ -48,6 +48,7 @@
       crossorigin="anonymous"
     ></script>
     <script src="/assets/js/angular.min.js"></script>
+    <script src="/assets/js/Product.js"></script>
   </head>
   <body ng-app="myApp" ng-controller="myCtrl">
     <div class="container-scroller">
@@ -459,13 +460,24 @@
                 <th scope="col">STT</th>
                 <th scope="col">Tên danh mục</th>
                 <th scope="col">Hình ảnh</th>
+                <th scope="col">Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
+              <tr ng-repeat="x in category">
+                <th scope="row">{{$index + 1}}</th>
+                <td>{{x.tenDanhMuc}}</td>
+                <td>
+                  <img
+                    style="width: 60px; height: 55px"
+                    src="{{x.imageDanhMuc}}"
+                    alt=""
+                  />
+                </td>
+                <td>
+                  <span style="color: blue">Sửa</span>
+                  <span style="color: red; margin-left: 15px">Xóa</span>
+                </td>
               </tr>
             </tbody>
           </table>
