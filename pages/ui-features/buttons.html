@@ -50,6 +50,18 @@
     <script src="/assets/js/angular.min.js"></script>
     <script src="/assets/js/Product.js"></script>
   </head>
+  <style>
+    select {
+      font-size: 16px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      width: 200px;
+      max-width: 100%;
+    }
+  </style>
   <body ng-app="myApp" ng-controller="myCtrl">
     <div class="container-scroller">
       <!-- partial:../../partials/_navbar.html -->
@@ -454,8 +466,118 @@
         </nav>
         <!-- partial -->
         <div style="margin-top: 50px" class="main-panel">
+          <input
+            ng-change="SearchProduct()"
+            ng-model="textinputsearch"
+            style="
+              border: 1px solid #ccc;
+              padding: 10px 7px;
+              border-radius: 7px;
+              margin-bottom: 10px;
+            "
+            placeholder="Tìm kiếm sản phẩm"
+            type="text"
+          />
           <table class="table">
-            <button>Thêm sản phẩm</button>
+            <button
+              class="btn btn-primary"
+              data-toggle="modal"
+              data-target="#exampleModal"
+            >
+              Thêm sản phẩm
+            </button>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="exampleModal"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                      Thêm sản phẩm
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form>
+                      <div class="form-group">
+                        <label for="exampleInputEmail1">Tên sản phẩm</label>
+                        <input
+                          ng-model="productName_Create"
+                          type="text"
+                          class="form-control"
+                          id="exampleInputEmail1"
+                          aria-describedby="emailHelp"
+                          placeholder=""
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Giá tiền</label>
+                        <input
+                          ng-model="productPrice_Create"
+                          type="number"
+                          class="form-control"
+                          id="exampleInputPrice1"
+                          placeholder=""
+                        />
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputPassword1">Mô tả</label>
+                        <input
+                          ng-model="productName_MoTa"
+                          type="text"
+                          class="form-control"
+                          id="exampleInputMoTa1"
+                          placeholder=""
+                        />
+                      </div>
+                      <div class="form-group">
+                        <select ng-model="CategoryID_Create">
+                          <option
+                            ng-repeat="x in category"
+                            value="{{x.maDanhMuc}}"
+                          >
+                            {{x.tenDanhMuc}}
+                          </option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <input type="file" name="file-upload" id="UploadFile" />
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Đóng
+                    </button>
+                    <button
+                      ng-click="addProduct()"
+                      type="button"
+                      class="btn btn-primary"
+                    >
+                      Thêm sản phẩm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             <thead>
               <tr>
                 <th scope="col">STT</th>
@@ -486,9 +608,126 @@
                 <td>{{x.moTa}}</td>
                 <td>{{x.tenNhaCungCap}}</td>
                 <td>
-                  <span style="color: blue">Sửa</span>
-                  <span style="margin-left: 10px; color: red">Xóa</span>
+                  <span
+                    ng-click="getProductByID(x.maSanPham)"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#exampleModalCenter"
+                    style="color: white"
+                    >Sửa</span
+                  >
+                  <span
+                    ng-click="deleteProduct(x.maSanPham)"
+                    style="margin-left: 10px; color: red"
+                    >Xóa</span
+                  >
                 </td>
+                <!-- Button trigger modal -->
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModalCenter"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="exampleModalCenterTitle"
+                  aria-hidden="true"
+                >
+                  <div
+                    class="modal-dialog modal-dialog-centered"
+                    role="document"
+                  >
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">
+                          Sửa sản phẩm
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="form-group">
+                            <input
+                              style="display: none"
+                              id="ProductID_Update"
+                              ng-model="ProductByID.maSanPham"
+                              type="text"
+                            />
+                            <label for="exampleInputEmail1">Tên sản phẩm</label>
+                            <input
+                              ng-model="ProductByID.tenSanPham"
+                              type="text"
+                              class="form-control"
+                              id="ProductName_Update"
+                              aria-describedby="emailHelp"
+                              placeholder=""
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label for="exampleInputPassword1">Giá tiền</label>
+                            <input
+                              ng-model="ProductByID.giaTien"
+                              type="number"
+                              class="form-control"
+                              id="ProductPrice_Update"
+                              placeholder=""
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label for="exampleInputPassword1">Mô tả</label>
+                            <input
+                              ng-model="ProductByID.moTa"
+                              type="text"
+                              class="form-control"
+                              id="ProductMota_Update"
+                              placeholder=""
+                            />
+                          </div>
+                          <div class="form-group">
+                            <select ng-model="CategoryID_Update">
+                              <option
+                                ng-repeat="x in category"
+                                value="{{x.maDanhMuc}}"
+                              >
+                                {{x.tenDanhMuc}}
+                              </option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <input
+                              type="file"
+                              name="file-upload"
+                              id="UploadFiles"
+                            />
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Đóng
+                        </button>
+                        <button
+                          ng-click="updateProduct()"
+                          type="button"
+                          class="btn btn-primary"
+                        >
+                          Sửa sản phẩm
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </tr>
             </tbody>
           </table>
